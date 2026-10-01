@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../lib/auth";
 import { SparkleIcon, CheckIcon } from "../components/icons";
 
-export function AuthScreen() {
+export function AuthScreen({ installApp, showInstall = true }: { installApp?: () => void; showInstall?: boolean }) {
   const { signIn, signUp } = useAuth();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -162,7 +162,7 @@ export function AuthScreen() {
           </div>
         </div>
 
-        <div className="mt-6 text-center text-[10px] uppercase tracking-[0.2em] text-[#454B52]">
+        {showInstall && installApp && (\n          <button\n            type="button"\n            onClick={installApp}\n            className="mt-5 w-full rounded-full border border-[#28D0C0]/40 bg-[#28D0C0]/10 px-5 py-3 text-[13px] font-bold text-[#28D0C0] transition-colors hover:bg-[#28D0C0]/15"\n          >\n            ↓ Install HabitPulse\n          </button>\n        )}\n\n        <div className="mt-6 text-center text-[10px] uppercase tracking-[0.2em] text-[#454B52]">
           Your data. Your habits. Your pulse.
         </div>
       </div>
