@@ -79,6 +79,18 @@ function AppShell() {
 
       <TopNav active={tab} onChange={setTab} onSettings={() => setSettings(true)} />
 
+      {!installed && (
+        <div className="relative mx-auto w-full max-w-[1600px] px-3 pt-2 md:px-6">
+          <button
+            type="button"
+            onClick={installApp}
+            className="w-full rounded-2xl border border-[#28D0C0]/30 bg-[#101414] px-4 py-3 text-[13px] font-bold text-[#28D0C0] transition-colors hover:bg-[#28D0C0]/10"
+          >
+            ↓ Install HabitPulse
+          </button>
+        </div>
+      )}
+
       <main className="relative mx-auto w-full max-w-[1600px] px-3 pb-4 pt-1 md:px-6">
         {tab === "today" && <TodayScreen />}
         {tab === "habits" && <HabitsScreen />}
