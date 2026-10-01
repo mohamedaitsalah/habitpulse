@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   TodayIcon,
   HabitsIcon,
@@ -18,14 +17,6 @@ interface TopNavProps {
   onSettings: () => void;
 }
 
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{
-    outcome: "accepted" | "dismissed";
-    platform: string;
-  }>;
-}
-
 const tabs: { key: TabKey; label: string; Icon: typeof TodayIcon }[] = [
   { key: "today", label: "Today", Icon: TodayIcon },
   { key: "habits", label: "Habits", Icon: HabitsIcon },
@@ -36,61 +27,29 @@ const tabs: { key: TabKey; label: string; Icon: typeof TodayIcon }[] = [
 
 export function TopNav({ active, onChange, onSettings }: TopNavProps) {
   const { user } = useAuth();
-  const [installPrompt, setInstallPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
-
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (event: Event) => {
-      event.preventDefault();
-      setInstallPrompt(event as BeforeInstallPromptEvent);
-    };
-
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-
-    return () => {
-      window.removeEventListener(
-        "beforeinstallprompt",
-        handleBeforeInstallPrompt
-      );
-    };
-  }, []);
-
-  const installApp = async () => {
-    if (installPrompt) {
-      await installPrompt.prompt();
-      await installPrompt.userChoice;
-      setInstallPrompt(null);
-      return;
-    }
-
-    const isIOS =
-      /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-    if (isIOS) {
-      alert(
-        'To install HabitPulse: tap the Share button in Safari, then choose "Add to Home Screen".'
-      );
-    } else {
-      alert(
-        'Open your browser menu and choose "Install app" or "Add to Home screen".'
-      );
-    }
-  };
 
   return (
     <header className="sticky top-0 z-30 w-full bg-[#0A0A0A]/90 backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4 px-5 py-4 md:px-9">
-        <div className="flex w-[220px] min-w-0 items-center">
+      <div className="mx-auto w-full max-w-[1600px] px-4 py-3 md:flex md:items-center md:justify-between md:gap-4 md:px-9 md:py-4">
+        <div className="flex items-center justify-between md:w-[220px]">
           <h1 className="truncate text-[15px] font-extrabold uppercase tracking-[0.06em] text-[#F3F3F3]">
             {tabs.find((t) => t.key === active)?.label === "Tasks"
               ? "Task Tracker"
               : tabs.find((t) => t.key === active)?.label}
           </h1>
+
+          <button
+            onClick={onSettings}
+            aria-label="Settings"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#5A626B] transition-colors hover:text-[#8B939C] md:hidden"
+          >
+            <SettingsIcon size={18} />
+          </button>
         </div>
 
-        <nav className="flex flex-1 justify-center px-2 min-w-0">
+        <nav className="mt-2 w-full overflow-x-auto pb-1 md:mt-0 md:flex md:flex-1 md:justify-center md:overflow-visible md:px-2 md:pb-0">
           <div
-            className="flex items-center gap-0.5 rounded-full border border-[#1E1E1E] p-[5px]"
+            className="mx-auto flex w-max min-w-full items-center justify-between gap-0.5 rounded-full border border-[#1E1E1E] p-[5px] md:min-w-0"
             style={{ background: "#111111" }}
           >
             {tabs.map(({ key, label, Icon }) => {
@@ -100,10 +59,11 @@ export function TopNav({ active, onChange, onSettings }: TopNavProps) {
               return (
                 <button
                   key={key}
+                  type="button"
                   onClick={() => onChange(key)}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-[7px] whitespace-nowrap rounded-full px-3 py-[9px] text-[12.5px] font-semibold transition-colors md:px-[15px]",
+                    "flex min-w-0 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-full px-2 py-[9px] text-[11px] font-semibold transition-colors md:flex-none md:gap-[7px] md:px-[15px] md:text-[12.5px]",
                     isActive
                       ? "text-[#28D0C0]"
                       : "text-[#5A626B] hover:text-[#8B939C]"
@@ -117,22 +77,15 @@ export function TopNav({ active, onChange, onSettings }: TopNavProps) {
           </div>
         </nav>
 
-        <div className="flex w-[220px] items-center justify-end gap-3">
-          <button
-            onClick={installApp}
-            className="whitespace-nowrap rounded-full border border-[#28D0C0]/30 px-3 py-2 text-[11px] font-semibold text-[#28D0C0] transition-colors hover:bg-[#28D0C0]/10"
-          >
-            ↓ Install
-          </button>
-
-          <span className="hidden max-w-[120px] truncate text-[11px] text-[#454B52] lg:block">
+        <div className="hidden w-[220px] items-center justify-end gap-3 md:flex">
+          <span className="hidden max-w-[150px] truncate text-[11px] text-[#454B52] lg:block">
             {user?.display_name}
           </span>
 
           <button
             onClick={onSettings}
             aria-label="Settings"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-[#5A626B] transition-colors hover:text-[#8B939C]"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[#5A626B] transition-colors hover:text-[#8B939C]"
           >
             <SettingsIcon size={17} />
           </button>
