@@ -18,9 +18,7 @@ interface BeforeInstallPromptEvent extends Event {
 export default function App() {
   return (
     <AuthProvider>
-      <StoreProvider>
-        <AppShell />
-      </StoreProvider>
+      <StoreProvider><AppShell /></StoreProvider>
     </AuthProvider>
   );
 }
@@ -46,7 +44,6 @@ function AppShell() {
       setInstalled(true);
       setInstallPrompt(null);
     };
-
     window.addEventListener("beforeinstallprompt", onPrompt);
     window.addEventListener("appinstalled", onInstalled);
     return () => {
@@ -62,24 +59,16 @@ function AppShell() {
       if (choice.outcome === "accepted") setInstallPrompt(null);
       return;
     }
-
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-      alert('To install HabitPulse: open this page in Safari, tap the Share button, then choose "Add to Home Screen".');
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      alert('Open HabitPulse in Safari, tap Share, then tap "Add to Home Screen".');
     } else {
-      alert('To install HabitPulse, open your browser menu and choose "Install app" or "Add to Home screen".');
+      alert('Use your browser menu and choose "Install app" or "Add to Home screen".');
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A]">
-        <div className="h-10 w-10 rounded-full border-2 border-t-[#28D0C0] border-t-[#27E7DB] animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A]"><div className="h-10 w-10 rounded-full border-2 border-t-[#27E7DB] animate-spin" /></div>;
 
-  if (!user) return <AuthScreen />;
+  if (!user) return <AuthScreen installApp={installApp} showInstall={!installed} />;
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-[#F5F7FA]">
@@ -90,33 +79,16 @@ function AppShell() {
 
       <TopNav active={tab} onChange={setTab} onSettings={() => setSettings(true)} />
 
-      {!installed && (
-        <div className="relative mx-auto w-full max-w-[1600px] px-3 pt-2 md:px-6">
-          <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#28D0C0]/20 bg-[#101414] px-4 py-3">
-            <div className="min-w-0">
-              <div className="text-[12px] font-bold text-[#F3F3F3]">Install HabitPulse</div>
-              <div className="mt-0.5 text-[10px] text-[#687178]">Add it to your device for quick app-like access.</div>
-            </div>
-            <button onClick={installApp} className="shrink-0 rounded-full bg-[#28D0C0] px-4 py-2 text-[11px] font-extrabold text-[#07110F] transition-opacity hover:opacity-90">
-              Install App
-            </button>
-          </div>
-        </div>
-      )}
-
       <main className="relative mx-auto w-full max-w-[1600px] px-3 pb-4 pt-1 md:px-6">
         {tab === "today" && <TodayScreen />}
         {tab === "habits" && <HabitsScreen />}
         {tab === "tasks" && <TasksScreen />}
         {tab === "goals" && <GoalsScreen />}
         {tab === "insights" && <InsightsScreen />}
-
         <footer className="mt-12 pt-6 border-t border-[#1E1E1E] flex flex-col md:flex-row items-center justify-between gap-2 text-[10px] uppercase tracking-[0.2em] text-[#454B52]">
-          <div>HabitPulse · Build Better Habits</div>
-          <div>© 2026 · All Systems Operational</div>
+          <div>HabitPulse · Build Better Habits</div><div>© 2026 · All Systems Operational</div>
         </footer>
       </main>
-
       <SettingsModal open={settings} onClose={() => setSettings(false)} />
     </div>
   );
