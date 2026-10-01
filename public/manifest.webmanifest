@@ -1,0 +1,9 @@
+{
+  "name": "HabitPulse",
+  "short_name": "HabitPulse",
+  "description": "Habit and productivity tracker",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a"
+}
