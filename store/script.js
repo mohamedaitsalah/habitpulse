@@ -1,5 +1,5 @@
 // Paste the live $19 PayPal Payment Link here before launch.
-const CHECKOUT_URL = "";
+const CHECKOUT_URL = "https://www.paypal.com/ncp/payment/CGHPHLZ8P5CYQ";
 
 document.querySelectorAll(".screen-tab").forEach((tab) => {
   tab.addEventListener("click", () => {
